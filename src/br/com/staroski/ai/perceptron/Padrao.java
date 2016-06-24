@@ -9,10 +9,6 @@ import java.util.List;
 
 public class Padrao {
 
-	public static List<Padrao> carregar(String csvFile, int dimensaoEntrada, int dimensaoSaida) {
-		return carregar(new File(csvFile), dimensaoEntrada, dimensaoSaida);
-	}
-
 	public static List<Padrao> carregar(File csvFile, int dimensaoEntrada, int dimensaoSaida) {
 		return carregar(csvFile.toPath(), dimensaoEntrada, dimensaoSaida);
 	}
@@ -28,6 +24,10 @@ public class Padrao {
 			e.printStackTrace();
 		}
 		return padroes;
+	}
+
+	public static List<Padrao> carregar(String csvFile, int dimensaoEntrada, int dimensaoSaida) {
+		return carregar(new File(csvFile), dimensaoEntrada, dimensaoSaida);
 	}
 
 	public final double[] entradas;

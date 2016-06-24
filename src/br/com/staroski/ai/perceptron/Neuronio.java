@@ -14,16 +14,8 @@ public class Neuronio {
 	private double saida = Double.MIN_VALUE; // Preset value of neuron.
 	private List<Sinapse> pesos; // Collection of weights to inputs.
 
-	public double getBias() {
-		return bias;
-	}
-	
-	public List<Sinapse> getEntradas() {
-		return pesos;
-	}
-	
 	public Neuronio() {}
-
+	
 	public Neuronio(Camada entradas, Random rnd) {
 		pesos = new ArrayList<Sinapse>();
 		for (Neuronio entrada : entradas) {
@@ -33,24 +25,7 @@ public class Neuronio {
 			pesos.add(p);
 		}
 	}
-
-	public void funcaoAtivacao() {
-		erro = 0;
-		entrada = 0;
-		for (Sinapse peso : pesos) {
-			entrada += peso.valor * peso.entrada.getValorSaida();
-		}
-	}
-
-	public void coletarErro(double delta) {
-		if (pesos != null) {
-			erro += delta;
-			for (Sinapse p : pesos) {
-				p.entrada.coletarErro(erro * p.valor);
-			}
-		}
-	}
-
+	
 	public void ajustarPesos() {
 		for (Sinapse p : pesos) {
 			p.valor += erro * funcaoDerivativa() * taxaAprendizado * p.entrada.getValorSaida();
@@ -62,9 +37,29 @@ public class Neuronio {
 		bias += erro * funcaoDerivativa() * taxaAprendizado;
 	}
 
-	private double funcaoDerivativa() {
-		double activation = getValorSaida();
-		return activation * (1 - activation);
+	public void coletarErro(double delta) {
+		if (pesos != null) {
+			erro += delta;
+			for (Sinapse p : pesos) {
+				p.entrada.coletarErro(erro * p.valor);
+			}
+		}
+	}
+
+	public void funcaoAtivacao() {
+		erro = 0;
+		entrada = 0;
+		for (Sinapse peso : pesos) {
+			entrada += peso.valor * peso.entrada.getValorSaida();
+		}
+	}
+
+	public double getBias() {
+		return bias;
+	}
+
+	public List<Sinapse> getEntradas() {
+		return pesos;
 	}
 
 	public double getValorSaida() {
@@ -76,6 +71,11 @@ public class Neuronio {
 
 	public void setSaida(double value) {
 		saida = value;
+	}
+
+	private double funcaoDerivativa() {
+		double activation = getValorSaida();
+		return activation * (1 - activation);
 	}
 
 

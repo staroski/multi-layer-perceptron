@@ -16,12 +16,12 @@ public class TestePerceptron {
 	}
 
 	private void executar() {
-		int dimensaoEntrada = 2;
-		int dimensaoOculta = 3;
-		int dimensaoSaida = 1;
+		int neuronsEntrada = 2;
+		int neuronsIntermediarios = 3;
+		int neuronsSaida = 1;
 		String arquivo = System.getProperty("user.dir") + "/src/patterns.csv";
-		List<Padrao> padroes = Padrao.carregar(arquivo, dimensaoEntrada, dimensaoSaida);
-		Rede rede = new Rede(dimensaoEntrada, dimensaoOculta, dimensaoSaida);
+		List<Padrao> padroes = Padrao.carregar(arquivo, neuronsEntrada, neuronsSaida);
+		Rede rede = new Rede(neuronsEntrada, neuronsIntermediarios, neuronsSaida);
 		System.out.println("treinando...");
 		double erro;
 		int it = 0;
@@ -34,10 +34,10 @@ public class TestePerceptron {
 	}
 
 	private void testar(Rede rede) {
-		int dimensaoEntrada = rede.getDimensao(0);
-		System.out.println(rede.ativar(new Padrao("0,0", dimensaoEntrada)).get(0).getValorSaida());
-		System.out.println(rede.ativar(new Padrao("0,1", dimensaoEntrada)).get(0).getValorSaida());
-		System.out.println(rede.ativar(new Padrao("1,0", dimensaoEntrada)).get(0).getValorSaida());
-		System.out.println(rede.ativar(new Padrao("1,1", dimensaoEntrada)).get(0).getValorSaida());
+		int neuronsEntrada = rede.getDimensao(0);
+		System.out.println(rede.ativar(new Padrao("0,0", neuronsEntrada)).get(0).getValorSaida());
+		System.out.println(rede.ativar(new Padrao("0,1", neuronsEntrada)).get(0).getValorSaida());
+		System.out.println(rede.ativar(new Padrao("1,0", neuronsEntrada)).get(0).getValorSaida());
+		System.out.println(rede.ativar(new Padrao("1,1", neuronsEntrada)).get(0).getValorSaida());
 	}
 }
