@@ -7,12 +7,14 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import br.com.staroski.ai.perceptron.CSV;
 import br.com.staroski.ai.perceptron.Neuronio;
 import br.com.staroski.ai.perceptron.Padrao;
 import br.com.staroski.ai.perceptron.Rede;
@@ -38,13 +40,9 @@ public class TestePerceptronVisual extends JFrame {
 		}
 	}
 
-	public TestePerceptronVisual() {
-		// String file = "Z:\\_test_ia_mlp\\src\\patterns.csv";
-		// patterns = Padrao.carregar(file, 2, 1);
-		// network = new Rede(2, 3, 2, 1);
-
+	public TestePerceptronVisual() throws IOException {
 		String file = System.getProperty("user.dir") + "/src/iris_data.csv"; // Replace with your input file location.
-		patterns = Padrao.carregar(file, 4, 3);
+		patterns = CSV.carregar(file, 4, 3);
 		network = new Rede(4, 4, 2, 3);
 
 		add(BorderLayout.CENTER, new JPanel() {
@@ -126,5 +124,4 @@ public class TestePerceptronVisual extends JFrame {
 		linha[2] = neuron.getBias();
 		return linha;
 	}
-
 }
