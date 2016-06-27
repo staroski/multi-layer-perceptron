@@ -2,15 +2,35 @@ package br.com.staroski.ai.perceptron;
 
 public class Padrao {
 
+	private static final class Builder implements PadraoBuilder {
+
+		private final int dimensaoEntrada;
+		private final int dimensaoSaida;
+
+		private Builder(int dimensaoEntrada, int dimensaoSaida) {
+			this.dimensaoEntrada = dimensaoEntrada;
+			this.dimensaoSaida = dimensaoSaida;
+		}
+
+		@Override
+		public Padrao valores(double... valores) {
+			return new Padrao(dimensaoEntrada, dimensaoSaida, valores);
+		}
+	}
+
+	public static PadraoBuilder teste(int dimensaoEntrada) {
+		return new Builder(dimensaoEntrada, 0);
+	}
+
+	public static PadraoBuilder treinamento(int dimensaoEntrada, int dimensaoSaida) {
+		return new Builder(dimensaoEntrada, dimensaoSaida);
+	}
+
 	public final double[] entradas;
 	public final double[] saidas;
 
-	public Padrao(int dimensaoEntrada, double... valores) {
-		this(dimensaoEntrada, 0, valores);
-	}
-
-	public Padrao(int dimensaoEntrada, int dimensaoSaida, double... valores) {
-		if (valores.length != dimensaoEntrada + dimensaoSaida) {
+	private Padrao(int dimensaoEntrada, int dimensaoSaida, double... valores) {
+		if (dimensaoEntrada + dimensaoSaida != valores.length) {
 			throw new IllegalArgumentException("Input does not match network configuration");
 		}
 		entradas = new double[dimensaoEntrada];
@@ -21,17 +41,5 @@ public class Padrao {
 		for (int i = 0; i < dimensaoSaida; i++) {
 			saidas[i] = valores[dimensaoEntrada + i];
 		}
-	}
-
-	public int saidaMaxima() {
-		int item = -1;
-		double max = Double.MIN_VALUE;
-		for (int i = 0; i < saidas.length; i++) {
-			if (saidas[i] > max) {
-				max = saidas[i];
-				item = i;
-			}
-		}
-		return item;
 	}
 }

@@ -24,11 +24,6 @@ public class TestePerceptronVisual extends JFrame {
 
 	private static final long serialVersionUID = 1;
 
-	private int iteration;
-	private List<Padrao> patterns;
-	private Rede network;
-	private Color[] brushes = new Color[] { Color.RED, Color.GREEN, Color.BLUE };
-
 	public static void main(String... args) {
 		try {
 			TestePerceptronVisual graph = new TestePerceptronVisual();
@@ -40,51 +35,21 @@ public class TestePerceptronVisual extends JFrame {
 		}
 	}
 
-	public TestePerceptronVisual() throws IOException {
-		String file = System.getProperty("user.dir") + "/src/iris_data.csv"; // Replace with your input file location.
-		patterns = CSV.carregar(file, 4, 3);
-		network = new Rede(4, 4, 2, 3);
-
-		add(BorderLayout.CENTER, new JPanel() {
-
-			private static final long serialVersionUID = 1;
-
-			@Override
-			protected void processKeyEvent(KeyEvent e) {
-				super.processKeyEvent(e);
-				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-					network.inicializar();
-					iteration = 0;
-				}
-			}
-
-			@Override
-			protected void paintComponent(Graphics g) {
-				double error = network.treinar(patterns);
-				UpdatePlotArea((Graphics2D) g, getBounds(), error);
-				iteration++;
-				invalidate();
-				repaint(0);
-			}
-		});
+	private static double[] hiperPlano(Neuronio neuron) {
+		double[] linha = new double[3];
+		List<Sinapse> pesos = neuron.getEntradas();
+		linha[0] = pesos.get(0).valor;
+		linha[1] = pesos.get(1).valor;
+		linha[2] = neuron.getBias();
+		return linha;
 	}
 
-	private void UpdatePlotArea(Graphics2D g, Rectangle bounds, double error) {
-		setTitle("Iteration: " + iteration + "  Error: " + error);
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, bounds.width, bounds.height);
-		for (float[] point : pontos2D(network, patterns)) {
-			g.setColor(brushes[(int) point[2]]);
-			g.fillRect((int) point[0] * (bounds.width - 5), (int) point[1] * (bounds.height - 5), 5, 5);
+	private static List<double[]> hiperPlanos(Rede rede) {
+		List<double[]> lines = new ArrayList<double[]>();
+		for (Neuronio n : rede.saidas()) {
+			lines.add(hiperPlano(n));
 		}
-		for (double[] line : hiperPlanos(network)) {
-			double a = -line[0] / line[1];
-			double c = -line[2] / line[1];
-			Point left = new Point(0, (int) (c * bounds.height));
-			Point right = new Point(bounds.width, (int) ((a + c) * bounds.height));
-			g.setColor(Color.GRAY);
-			g.drawLine(left.x, left.y, right.x, right.y);
-		}
+		return lines;
 	}
 
 	private static List<float[]> pontos2D(Rede rede, List<Padrao> padroes) {
@@ -99,7 +64,7 @@ public class TestePerceptronVisual extends JFrame {
 			point[0] = (float) rede.get(penultimate).get(0).getValorSaida();
 			point[1] = (float) rede.get(penultimate).get(1).getValorSaida();
 			if (rede.saidas().size() > 1) {
-				point[2] = padroes.get(i).saidaMaxima();
+				point[2] = saidaMaxima(padroes.get(i));
 			} else {
 				point[2] = (padroes.get(i).saidas[0] >= 0.5) ? 1 : 0;
 			}
@@ -108,20 +73,81 @@ public class TestePerceptronVisual extends JFrame {
 		return points;
 	}
 
-	private static List<double[]> hiperPlanos(Rede rede) {
-		List<double[]> lines = new ArrayList<double[]>();
-		for (Neuronio n : rede.saidas()) {
-			lines.add(hiperPlano(n));
+	private static int saidaMaxima(Padrao padrao) {
+		int item = -1;
+		double max = Double.MIN_VALUE;
+		for (int i = 0; i < padrao.saidas.length; i++) {
+			if (padrao.saidas[i] > max) {
+				max = padrao.saidas[i];
+				item = i;
+			}
 		}
-		return lines;
+		return item;
 	}
 
-	private static double[] hiperPlano(Neuronio neuron) {
-		double[] linha = new double[3];
-		List<Sinapse> pesos = neuron.getEntradas();
-		linha[0] = pesos.get(0).valor;
-		linha[1] = pesos.get(1).valor;
-		linha[2] = neuron.getBias();
-		return linha;
+	private int iteration;
+
+	private List<Padrao> patterns;
+
+	private Rede network;
+
+	private Color[] brushes = new Color[] { Color.RED, Color.GREEN, Color.BLUE };
+
+	public TestePerceptronVisual() throws IOException {
+		// String csvFile = System.getProperty("user.dir") + "/src/iris_data.csv";
+		// int camadaEntrada = 4;
+		// int camada2 = 4;
+		// int camada3 = 2;
+		// int camadaSaida = 3;
+		// patterns = CSV.carregar(csvFile, camadaEntrada, camadaSaida);
+		// network = new Rede(camadaEntrada, camada2, camada3, camadaSaida);
+		String csvFile = System.getProperty("user.dir") + "/src/patterns.csv";
+		int camadaEntrada = 2;
+		int camada2 = 3;
+		int camada3 = 2;
+		int camadaSaida = 1;
+		patterns = CSV.carregar(csvFile, camadaEntrada, camadaSaida);
+		network = new Rede(camadaEntrada, camada2, camada3, camadaSaida);
+		add(BorderLayout.CENTER, new JPanel() {
+
+			private static final long serialVersionUID = 1;
+
+			@Override
+			protected void paintComponent(Graphics g) {
+				double error = network.treinar(patterns);
+				UpdatePlotArea((Graphics2D) g, getBounds(), error);
+				iteration++;
+				invalidate();
+				repaint(0);
+			}
+
+			@Override
+			protected void processKeyEvent(KeyEvent e) {
+				super.processKeyEvent(e);
+				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+					network.inicializar();
+					iteration = 0;
+				}
+			}
+		});
+	}
+
+	private void UpdatePlotArea(Graphics2D g, Rectangle bounds, double error) {
+		setTitle("Iteration: " + iteration + "  Error: " + error);
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, bounds.width, bounds.height);
+		final int pointSize = 4;
+		for (float[] point : pontos2D(network, patterns)) {
+			g.setColor(brushes[(int) point[2]]);
+			g.fillRect((int) point[0] * (bounds.width - pointSize), (int) point[1] * (bounds.height - pointSize), pointSize, pointSize);
+		}
+		for (double[] line : hiperPlanos(network)) {
+			double a = -line[0] / line[1];
+			double c = -line[2] / line[1];
+			Point left = new Point(0, (int) (c * bounds.height));
+			Point right = new Point(bounds.width, (int) ((a + c) * bounds.height));
+			g.setColor(Color.GRAY);
+			g.drawLine(left.x, left.y, right.x, right.y);
+		}
 	}
 }

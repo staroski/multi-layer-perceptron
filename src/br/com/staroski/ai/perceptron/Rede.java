@@ -65,6 +65,17 @@ public class Rede extends ArrayList<Camada> {
 		return erro;
 	}
 
+	public int treinar(List<Padrao> padroes, double assertividade) {
+		double tolerancia = 1 - assertividade;
+		double erro;
+		int iteracoes = 0;
+		do {
+			erro = treinar(padroes);
+			iteracoes++;
+		} while (erro > tolerancia);
+		return iteracoes;
+	}
+
 	private void ajustarPesos() {
 		for (int i = size() - 1; i > 0; i--) {
 			for (Neuronio neuron : get(i)) {

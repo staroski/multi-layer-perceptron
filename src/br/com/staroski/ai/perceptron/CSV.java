@@ -28,7 +28,7 @@ public class CSV {
 			for (int i = 0; i < dimensaoSaida; i++) {
 				valores[dimensaoEntrada + i] = Double.parseDouble(linha[dimensaoEntrada + i]);
 			}
-			padroes.add(new Padrao(dimensaoEntrada, dimensaoSaida, valores));
+			padroes.add(Padrao.treinamento(dimensaoEntrada, dimensaoSaida).valores(valores));
 		}
 		return padroes;
 	}
