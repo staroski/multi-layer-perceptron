@@ -7,17 +7,17 @@ import br.com.staroski.ai.perceptron.TrainingFile;
 import br.com.staroski.ai.perceptron.Network;
 import br.com.staroski.ai.perceptron.Pattern;
 
-public class TestePerceptron {
+public class PerceptronTest {
 
     public static void main(String[] args) {
         try {
-            new TestePerceptron().executar();
+            new PerceptronTest().execute();
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
-    private void executar() throws IOException {
+    private void execute() throws IOException {
         int inputNeurons = 2;
         int middleNeurons = 3;
         int outputNeurons = 1;

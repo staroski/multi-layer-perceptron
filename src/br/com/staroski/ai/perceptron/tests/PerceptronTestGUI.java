@@ -20,13 +20,13 @@ import br.com.staroski.ai.perceptron.Neuron;
 import br.com.staroski.ai.perceptron.Pattern;
 import br.com.staroski.ai.perceptron.Synapsis;
 
-public class TestePerceptronVisual extends JFrame {
+public class PerceptronTestGUI extends JFrame {
 
     private static final long serialVersionUID = 1;
 
     public static void main(String... args) {
         try {
-            TestePerceptronVisual graph = new TestePerceptronVisual();
+            PerceptronTestGUI graph = new PerceptronTestGUI();
             graph.setDefaultCloseOperation(EXIT_ON_CLOSE);
             graph.setSize(400, 400);
             graph.setVisible(true);
@@ -35,7 +35,7 @@ public class TestePerceptronVisual extends JFrame {
         }
     }
 
-    private static List<double[]> hiperPlanos(Network net) {
+    private static List<double[]> hiperPlanes(Network net) {
         List<double[]> lines = new ArrayList<double[]>();
         for (Neuron n : net.outputs()) {
             lines.add(hyperPlane(n));
@@ -93,7 +93,7 @@ public class TestePerceptronVisual extends JFrame {
 
     private Color[] brushes = new Color[] { Color.RED, Color.GREEN, Color.BLUE };
 
-    public TestePerceptronVisual() throws IOException {
+    public PerceptronTestGUI() throws IOException {
         String csvFile = System.getProperty("user.dir") + "/src/iris_data.csv";
         String separator = "\\,";
         int inputLayer = 4;
@@ -135,7 +135,7 @@ public class TestePerceptronVisual extends JFrame {
             g.setColor(brushes[(int) point[2]]);
             g.fillRect((int) point[0] * (bounds.width - pointSize), (int) point[1] * (bounds.height - pointSize), pointSize, pointSize);
         }
-        for (double[] line : hiperPlanos(network)) {
+        for (double[] line : hiperPlanes(network)) {
             double a = -line[0] / line[1];
             double c = -line[2] / line[1];
             Point left = new Point(0, (int) (c * bounds.height));

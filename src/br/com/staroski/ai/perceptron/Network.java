@@ -10,6 +10,8 @@ public class Network implements Iterable<Layer> {
     private final int[] sizes;
     private final Layer[] layers;
 
+    private NetworkListener listener;
+
     public Network(int layer1, int layer2, int... layerN) {
         int count = 2 + layerN.length;
         layers = new Layer[count];
@@ -57,6 +59,11 @@ public class Network implements Iterable<Layer> {
         return layers[layers.length - 1];
     }
 
+    public Network setListener(NetworkListener listener) {
+        this.listener = listener;
+        return this;
+    }
+
     public int size() {
         return layers.length;
     }
@@ -73,6 +80,7 @@ public class Network implements Iterable<Layer> {
                 double delta = padrao.outputs[i] - outputs().get(i).value();
                 outputs().get(i).colectError(delta);
                 error += Math.pow(delta, 2);
+                notifyError(error);
             }
             adjustWeights();
         }
@@ -87,6 +95,7 @@ public class Network implements Iterable<Layer> {
             error = train(patterns);
             iterations++;
         } while (error > tolerancy);
+        notifyTrained(iterations);
         return iterations;
     }
 
@@ -96,5 +105,18 @@ public class Network implements Iterable<Layer> {
                 neuron.adjustWeights();
             }
         }
+    }
+
+    private void notifyError(double error) {
+        try {
+            listener.onError(this, error);
+        } catch (NullPointerException npe) {}
+    }
+
+    private void notifyTrained(int iterations) {
+        try {
+            listener.onTrained(this, iterations);
+        } catch (NullPointerException npe) {}
+
     }
 }
